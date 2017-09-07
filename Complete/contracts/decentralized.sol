@@ -12,9 +12,10 @@ contract decentralized {
 	uint public ptr = 0;
 
 	/* Constructor when first deploy contract */
-	function decentralized() {
+	function decentralized() { 
 		owner = msg.sender;	
 	}
+
 
 	/* Adds player to array of Player structs */
 	function addPlayer(bytes32 playerName, address playerWallet) {
@@ -24,7 +25,7 @@ contract decentralized {
 	}
 
 	/* Collects ether from player */
-	function collect() {
+	function collect() payable {
 
 		for( uint i = 0; i < playerList.length; i++) {
 	
@@ -55,4 +56,3 @@ contract decentralized {
 		}
 	}
 }
-

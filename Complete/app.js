@@ -30,32 +30,36 @@ var http = require('http').Server(app);
 var port = process.env.PORT || 3000;
 var io = require('socket.io')(http);
 
-/* Set up web3 library */
+/* Set up web3 library 
 var Web3 = require('web3');
 if (typeof web !== 'undefined') {
 	web3 = new Web3(web3.currentProvider);
 } else {
 	// set the provider you want from Web3.providers, in this case its localhost
-	web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:3000"));
+	web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 }
 var fs = require('fs');
-var code = fs.readFileSync('./contracts/decentralized.sol').toString();
+var code = fs.readFileSync('./contracts/Bank.sol').toString();
+//var code = fs.readFileSync('./contracts/decentralized.sol').toString();
 var solc = require('solc');
 var compiledCode = solc.compile(code);
 
 //Deploy the contract 
-abiDefinition = JSON.parse(compiledCode.contracts[':decentralized'].interface);
-/*GameContract = web3.eth.contract(abiDefinition);
-byteCode = compiledCode.contracts[':decentralized'].bytecode;
+abiDefinition = JSON.parse(compiledCode.contracts[':Bank'].interface);
+//abiDefinition = JSON.parse(compiledCode.contracts[':decentralized'].interface);
+GameContract = web3.eth.contract(abiDefinition);
+byteCode = compiledCode.contracts[':Bank'].bytecode;
+//byteCode = compiledCode.contracts[':decentralized'].bytecode;
 deployedContract = GameContract.new( {data: byteCode, from: web3.eth.accounts[0], gas: 4700000});
 contractInstance = GameContract.at(deployedContract.address);
-contractInstance.decentralized(); //invoke constructor
+web3.eth.defaultAccount=web3.eth.accounts[0]; //set default account 
 
-//Add player1 and player2 names and wallets 
-contractInstance.addPlayer('player1', 0x6760e300b57a4ddf2362056c711781655b9d64fc);
-contractInstance.addPlayer('player2', 0xc4fb920eb5089070b82c5133d12ed0a78c85cc37);
+
+/*Add player1 and player2 names and wallets 
+//contractInstance.forward(web3.eth.defaultAccount);
+//contractInstance.addPlayer('player1', web3.eth.accounts[1]);
+//contractInstance.deposit();
 */
-
 
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/public/default.html');
@@ -77,15 +81,16 @@ io.on('connection', function(socket) {
 	console.log(msg);
 	if(msg === 'Game over, White is in checkmate.') {
 		//Pay player 1
-		contractInstance.pay('player1');
+		//contractInstance.pay('player1');
+		
 	}
 	else if(msg === 'Game over, Black is in checkmate.') {
 		//Pay player 2
-		contractInstance.pay('player2');
+		//contractInstance.pay('player2');
 	}
 	else if(msg === 'Game over, drawn position') {
 		//Refund ether to player 1 and player 2
-		contractInstance.refund();
+		//contractInstance.refund();	
 	}
     });
 });

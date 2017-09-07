@@ -41,5 +41,8 @@
   "dependencies": {
     "socket.io": "^1.2.0",
     "solc": "^0.4.16"
+  },
+  "scripts": {
+    "start": "node app.js"
   }
 }
