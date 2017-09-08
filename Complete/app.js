@@ -30,8 +30,9 @@ var http = require('http').Server(app);
 var port = process.env.PORT || 3000;
 var io = require('socket.io')(http);
 
-/* Set up web3 library 
+/* Set up web3 library */
 var Web3 = require('web3');
+/*
 if (typeof web !== 'undefined') {
 	web3 = new Web3(web3.currentProvider);
 } else {
@@ -55,11 +56,14 @@ contractInstance = GameContract.at(deployedContract.address);
 web3.eth.defaultAccount=web3.eth.accounts[0]; //set default account 
 
 
-/*Add player1 and player2 names and wallets 
-//contractInstance.forward(web3.eth.defaultAccount);
-//contractInstance.addPlayer('player1', web3.eth.accounts[1]);
-//contractInstance.deposit();
-*/
+
+//contractInstance.forward(web3.eth.defaultAccount); */
+var web3 = new Web3(Web3.givenProvider || new Web3.providers.HttpProvider("http://localhost:8545"));
+abi = JSON.parse('[{"constant":false,"inputs":[],"name":"payBlack","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"kill","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"payWhite","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"getContractCreationValue","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"player_two","type":"address"}],"payable":true,"stateMutability":"payable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"}]');
+VotingContract = web3.eth.contract(abi);
+// In your nodejs console, execute contractInstance.address to get the address at which the contract is deployed and change the line below to use your deployed address
+contractInstance = VotingContract.at('0x41db9dff8a029e426cd879f7bafcfad4ae559b3a');
+
 
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/public/default.html');
@@ -81,16 +85,16 @@ io.on('connection', function(socket) {
 	console.log(msg);
 	if(msg === 'Game over, White is in checkmate.') {
 		//Pay player 1
-		//contractInstance.pay('player1');
+		contractInstance.payBlack();
 		
 	}
 	else if(msg === 'Game over, Black is in checkmate.') {
 		//Pay player 2
-		//contractInstance.pay('player2');
+		contractInstance.payWhite();
 	}
 	else if(msg === 'Game over, drawn position') {
 		//Refund ether to player 1 and player 2
-		//contractInstance.refund();	
+		contractInstance.kill();
 	}
     });
 });
