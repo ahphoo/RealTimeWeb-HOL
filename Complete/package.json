@@ -3,9 +3,7 @@
   "version": "0.0.2",
   "description": "Frontend example using truffle v3",
   "scripts": {
-    "lint": "eslint ./",
-    "build": "webpack",
-    "dev": "webpack-dev-server"
+    "start": "node app.js"
   },
   "author": "Douglas von Kohorn",
   "license": "MIT",
@@ -39,10 +37,9 @@
     "test": "test"
   },
   "dependencies": {
+    "node": "^8.3.0",
+    "npm": "^5.4.1",
     "socket.io": "^1.2.0",
     "solc": "^0.4.16"
-  },
-  "scripts": {
-    "start": "node app.js"
   }
 }
