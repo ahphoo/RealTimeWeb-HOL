@@ -13,28 +13,32 @@ if (typeof web !== 'undefined') {
 	// set the provider you want from Web3.providers, in this case its localhost
 	web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 }
+
+/*Read code and compile with solc */
 fs = require('fs');
 code = fs.readFileSync('./contracts/ChainChess.sol').toString();
 solc = require('solc');
 compiledCode = solc.compile(code);
 
 /*Deploy the contract */
+//abiDefinition = JSON.parse('[{"constant":false,"inputs":[],"name":"payBlack","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[],"name":"getPot","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"kill","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"payWhite","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"inputs":[{"name":"player2","type":"address"}],"payable":true,"stateMutability":"payable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"}]');
 abiDefinition = JSON.parse(compiledCode.contracts[':ChainChess'].interface);
 GameContract = web3.eth.contract(abiDefinition);
 byteCode = compiledCode.contracts[':ChainChess'].bytecode;
 deployedContract = GameContract.new( web3.eth.accounts[1], {data: byteCode, from: web3.eth.accounts[0], gas: 4700000});
-deployedContract.address; //I don't know, maybe wait a cycle for contract to deploy?
-contractInstance = GameContract.at(deployedContract.address);
 
-web3.eth.defaultAccount=web3.eth.accounts[0]; //set default account 
+//Send 1 ether to contract
 web3.eth.sendTransaction( {from: web3.eth.accounts[0], to: deployedContract.address, value:1000000000000000000, gas: 290000} ); //send 1 ether
+web3.eth.defaultAccount=web3.eth.accounts[0]; //set default account 
 
-/*
+/*Maybe need the bottom line later for Geth
+Web3 = require('web3');
 var web3 = new Web3(Web3.givenProvider || new Web3.providers.HttpProvider("http://localhost:8545"));
-abi = JSON.parse('[{"constant":false,"inputs":[],"name":"payBlack","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[],"name":"getPot","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"payWhite","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"inputs":[{"name":"player2","type":"address"}],"payable":true,"stateMutability":"payable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"}]');
-VotingContract = web3.eth.contract(abi);
+abi = JSON.parse('[{"constant":false,"inputs":[],"name":"payBlack","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[],"name":"getPot","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"kill","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"payWhite","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"inputs":[{"name":"player2","type":"address"}],"payable":true,"stateMutability":"payable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"}]');
+GameContract = web3.eth.contract(abi);
 // In your nodejs console, execute contractInstance.address to get the address at which the contract is deployed and change the line below to use your deployed address
-contractInstance = VotingContract.at('0x41db9dff8a029e426cd879f7bafcfad4ae559b3a'); */
+contractInstance = GameContract.at('0x41db9dff8a029e426cd879f7bafcfad4ae559b3b'); 
+web3.eth.defaultAccount=web3.eth.accounts[0]; //set default account */
 
 /* Handle HTML request and provide path to default.html */
 app.get('/', function(req, res) {
@@ -54,6 +58,10 @@ io.on('connection', function(socket) {
     });
 
     socket.on('status', function(msg) {
+
+	/* Create contractInstance here to avoid VM_invalid_opcode error */
+	addr = deployedContract.address; //Save address of deployed contract in variable 
+	contractInstance = GameContract.at(addr);
 
     	//socket.broadcast.emit('status',msg);
 	console.log(msg);
