@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "ethereumjs-testrpc": "^4.1.1",
-    "express": "^4.15.4",
+    "express": "^4.13.4",
     "node": "^8.3.0",
     "npm": "^5.4.1",
     "socket.io": "^1.4.5",

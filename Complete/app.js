@@ -6,17 +6,17 @@ var port = process.env.PORT || 3000;
 var io = require('socket.io')(http);
 
 /* Set up web3 library */
-var Web3 = require('web3');
+Web3 = require('web3');
 if (typeof web !== 'undefined') {
 	web3 = new Web3(web3.currentProvider);
 } else {
 	// set the provider you want from Web3.providers, in this case its localhost
 	web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 }
-var fs = require('fs');
-var code = fs.readFileSync('./contracts/ChainChess.sol').toString();
-var solc = require('solc');
-var compiledCode = solc.compile(code);
+fs = require('fs');
+code = fs.readFileSync('./contracts/ChainChess.sol').toString();
+solc = require('solc');
+compiledCode = solc.compile(code);
 
 /*Deploy the contract */
 abiDefinition = JSON.parse(compiledCode.contracts[':ChainChess'].interface);
@@ -55,7 +55,7 @@ io.on('connection', function(socket) {
 
     socket.on('status', function(msg) {
 
-    	socket.broadcast.emit('status',msg);
+    	//socket.broadcast.emit('status',msg);
 	console.log(msg);
 	if(msg === 'Game over, White is in checkmate.') {
 		//Pay player 1
