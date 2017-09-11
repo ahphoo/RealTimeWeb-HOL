@@ -70,4 +70,8 @@ io.on('connection', function(socket) {
 		contractInstance.kill();
 	}
     });
+
+    socket.on('error', function(msg) {
+    	console.log(msg);
+    });
 });
