@@ -28,7 +28,7 @@
     "json-loader": "^0.5.4",
     "style-loader": "^0.13.1",
     "truffle-contract": "^1.1.11",
-    "web3": "^0.18.2",
+    "web3": "^0.20.1",
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.3.0"
   },
@@ -37,9 +37,11 @@
     "test": "test"
   },
   "dependencies": {
+    "ethereumjs-testrpc": "^4.1.1",
+    "express": "^4.15.4",
     "node": "^8.3.0",
     "npm": "^5.4.1",
-    "socket.io": "^1.2.0",
+    "socket.io": "^1.4.5",
     "solc": "^0.4.16"
   }
 }
